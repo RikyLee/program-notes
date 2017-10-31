@@ -136,7 +136,7 @@ replication:
 
 ## 配置主节点、从节点、仲裁节点
 
-- - 分别在三台设备上执行 ` /home/mongodb/mongodb-linux-x86_64-rhel62-3.4.10/bin/mongod --config /home/mongodb/mongod.conf` 启动mongodb服务
+- 分别在三台设备上执行 ` /home/mongodb/mongodb-linux-x86_64-rhel62-3.4.10/bin/mongod --config /home/mongodb/mongod.conf` 启动mongodb服务
 
 - 控制台连接主节点(172.16.10.42)mongo `/home/mongodb/mongodb-linux-x86_64-rhel62-3.4.10/bin/mongo 127.0.0.1:27020 -u admin -p ` , 使用admin帐号密码登录mongodb
 - 初始化副本集配置
