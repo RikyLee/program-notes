@@ -1,10 +1,4 @@
 
-**目录 (Table of Contents)**
-
-[TOCM]
-
-[TOC]
-
 ## 环境介绍
 - 系统：CentOS 6.9
 - MongoDB版本：[mongodb-linux-x86_64-rhel62-3.4.10](https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.4.10.tgz)
