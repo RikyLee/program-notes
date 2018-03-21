@@ -4,6 +4,8 @@
 
 ## [小米开源监控框架open falcon 入坑之环境搭建](https://github.com/aiguanglee/program-notes/blob/master/open-falcon%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.md)
 
-## [pyenv管理多版本python.md](https://github.com/aiguanglee/program-notes/blob/master/pyenv%E7%AE%A1%E7%90%86%E5%A4%9A%E7%89%88%E6%9C%ACpython.md)
+## [pyenv管理多版本python](https://github.com/aiguanglee/program-notes/blob/master/pyenv%E7%AE%A1%E7%90%86%E5%A4%9A%E7%89%88%E6%9C%ACpython.md)
 
-## [openssh无密登录.md](https://github.com/aiguanglee/program-notes/blob/master/openssh%E6%97%A0%E5%AF%86%E7%99%BB%E5%BD%95.md)
+## [openssh无密登录](https://github.com/aiguanglee/program-notes/blob/master/openssh%E6%97%A0%E5%AF%86%E7%99%BB%E5%BD%95.md)
+
+## [网站占用带宽计算](https://github.com/aiguanglee/program-notes/blob/master/%E5%B8%A6%E5%AE%BD%E8%AE%A1%E7%AE%97.md)
