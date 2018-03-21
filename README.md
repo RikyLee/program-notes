@@ -11,3 +11,4 @@
 ## [网站占用带宽计算](https://github.com/aiguanglee/program-notes/blob/master/%E5%B8%A6%E5%AE%BD%E8%AE%A1%E7%AE%97.md)
 
 ## [Spring Boot集成LDAP实现登录](https://github.com/aiguanglee/program-notes/blob/master/SpringBoot%E9%9B%86%E6%88%90LDAP%E5%AE%9E%E7%8E%B0%E7%99%BB%E5%BD%95.md)
+## [Spring Boot MongoDB多数据源配置](https://github.com/aiguanglee/program-notes/blob/master/SpringBoot%20MongoDB%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE.md)
