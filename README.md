@@ -9,3 +9,5 @@
 ## [openssh无密登录](https://github.com/aiguanglee/program-notes/blob/master/openssh%E6%97%A0%E5%AF%86%E7%99%BB%E5%BD%95.md)
 
 ## [网站占用带宽计算](https://github.com/aiguanglee/program-notes/blob/master/%E5%B8%A6%E5%AE%BD%E8%AE%A1%E7%AE%97.md)
+
+## [Spring Boot集成LDAP实现登录](https://github.com/aiguanglee/program-notes/blob/master/SpringBoot%E9%9B%86%E6%88%90LDAP%E5%AE%9E%E7%8E%B0%E7%99%BB%E5%BD%95.md)
