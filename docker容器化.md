@@ -65,3 +65,38 @@ Docker-CE      所有版本，需安装yum源
 
 - 进入容器
 docker exec -it container-name /bin/sh
+
+docker image 含有启动容器所需的文件系统及其内容，因此，其用于创建并启动docker容器
+	采用分层构建机制，最底层为bootfs，其次为rootfs
+		bootfs：用于系统引导的文件系统，包括bootloader和kernel，容器启动之后会被卸载以节约内存资源
+		rootfs：位于bootfs之上，表现为docker容器的根文件系统，docker中rootfs被内核挂载为只读，然后通过联合挂载的形式挂载一个可写层
+
+Aufs Advanced multi-layered unification filesystem 高级多层统一文件系统
+- 用于Linux文件系统实现联合挂载
+- aufs是之前UnionFS的重新实现，2006年优Junjiro Okajima开发
+- Docker最早使用aufs作为容器文件系统层，目前仍作为存储后端之一来支持
+- aufs的竞争产品是overlayfs，自3.18版本之后合并到linux的内核
+- docker 的分层镜像，除了aufs，docker还支持btrfs，devicemapper和vfs
+	- 在Ubuntu系统，docker默认使用aufs，而在centos 7上，用的是devicemapper
+	
+
+
+Docker Registry分类
+
+- Registry用于保存docker镜像，包括镜像的层次结构和元数据
+- 用户可以自己Registry，也可以使用官方的Docker Hub
+- 分类
+	- Sponsor Registry 第三方的registry，供客户和Docker社区使用
+	- Mirror Registry 第三方的registry，只供客户使用
+	- Vendor Registry 由发布Docker镜像的供应商提供的registry
+	- Private Registry 通过设有防火墙和额外的安全层的私有实体通过的registry
+	
+Registry （repository and index） index维护用户信息、镜像索引信息等
+
+
+镜像的导入导出
+
+docker save -o filename  IMAGE [IMAGE]
+
+docker load -i filename
+
