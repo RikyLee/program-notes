@@ -100,3 +100,29 @@ docker save -o filename  IMAGE [IMAGE]
 
 docker load -i filename
 
+docker容器虚拟网络
+
+OVS (Open VSwitch) SDN (Software Defined Network)
+
+Overlay Network 叠加网络 隧道转发 报文封装
+
+docker 默认bridge 是一个nat桥  安装bridge-utils 使用brctl 查看
+
+docker 四种网络模型
+- Closed container 只有Loopback interface 不能实现网络通讯
+- Bridged container 桥接网络
+- Joined container 联盟式网络，多个容器隔离User、Pid、Mount，但是共享UTC、IPC、NET
+- Open container  开放式网络，直接使用物理机网卡
+
+/ect/docker/daemon.json
+
+bip: 修改桥接网络默认的IP地址
+hosts:["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"] 设置之后远程可操作本机docker
+
+
+打开宿主机上的核心网络转发，可以实现本机docker上的不同bridge的通信
+
+
+docker 容器存储卷
+
+写时复制（COW）：修改一个已经存在的文件，文件会被从只读层复制到读写层，只读文件仍然存在，被读写层的文件副本隐藏
