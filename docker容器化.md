@@ -126,3 +126,150 @@ hosts:["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"] 设置之后远程可
 docker 容器存储卷
 
 写时复制（COW）：修改一个已经存在的文件，文件会被从只读层复制到读写层，只读文件仍然存在，被读写层的文件副本隐藏
+
+关闭并重启容器，数据不受影响；但删除Docker容器，则其更改全部丢失。
+存在问题：
+	- 存储于联合文件系统中，不易于宿主机访问
+	- 容器间数据共享不便
+	- 容器删除其数据会丢失
+
+解决方案: volume(卷)
+	- 卷是容器上的一个活多个“目录”，此类目录可绕过联合文件系统，与宿主机上的某目录“绑定（关联）”
+
+Docker两种类型的卷，每种类型都在容器中存在一个挂载点，但其在宿主机上的位置有所不同
+- Bind-mount Volume: a volume that points a user-specified location on the host file system
+
+- Docker-managed volume: the Docker daemon creates managed volumes in a portion of the host's file system that's owned by Docker 存放路径为`/var/lib/docker/volumes/${id}/${volume path}`
+
+在容器中使用Volumes
+
+在docker run 命令使用-v选项即可使用Volume
+- Docker-managed Volume `docker run -it --name bbox1 -v /data busybox`,查看bbox1容器的卷、卷标识符及挂载的主机目录 `docker inspect -f {{.Mounts}} bbox1`
+- Bind-mount Volume `docker run -it -v HOSTERDIR:VOLUMEDIR --name bbox2 busybox` 查看bbox1容器的卷、卷标识符及挂载的主机目录 `docker inspect -f {{.Mounts}} bbox2`
+
+共享Volumes
+- 多个容器使用同一个主机目录
+	```
+	docker run -it --name c1 -v /docker/volumes/v1:/data busybox
+	docker run -it --name c2 -v /docker/volumes/v1:/data busybox
+	```
+- 复制使用其他容器的卷,在docker run命令使用 --volumes-from container
+	```
+	docker run -it --name bbox1 -v /docker/volumes/v1:/data busybox
+	docker run -it --name bbox2 --volumes-from bbox1 busybox
+	```
+
+镜像的制作
+- 基于容器
+- Dockerfile
+
+Dockerfile Format
+
+- Format
+ - #Comment #号开头表示注释
+ - INSTRUCTION arguments  指令不区分大小写 第一个指令必须`FROM` 基础镜像
+
+ .dockeringore 每行表示一个文件，可以通配符，包含的文件会被忽略，不会打入镜像中
+
+ Dockerfile instructions  dockerfile 指令
+
+ - FROM指令是最重的一个且必须为Dockerfile文件开篇的第一个非注释行，用于为映像文件构建过程指定基准镜像，后续的指令运行于此基准镜像所提供的运行环境，默认情况下，docker build会在docker主机上查找指定的镜像文件，在其不存在是，则会从Docker Hub Registry上拉取所需的镜像文件，如果找不到指定的镜像文件，docker build会返回一个错误信息
+
+	```
+	FROM <repository>[:<tag>]
+	FROM <repository>@<digest>
+
+	<repositort>: 指定作为base image的名称
+	<tag>: base image的标签，为可选项，省略时默认为
+	```
+
+- MAINTAINER(depreacted) 用于让Dockerfile制作者提供本人的详细信息。不限制出现的位置，但推荐放在FROM指令之后
+
+```
+MAINTAINER <author's detail> 约定使用作者的名称及邮件地址
+
+MAINTAINER "RikyLi <rikylee719@gmail.com>"
+```
+
+- LABEL添加镜像的元数据,可以包含多个label，也可以一行写多个label
+```
+LABEL <key>=<value> <key>=<value> <key>=<value> ...
+```
+
+- COPY 用于从Docker主机复制文件到创建的新映像文件,建议dest使用绝对路径，否则COPY指定则以WORKDIR为其起始路径
+```
+COPY <src>... <dest>
+COPY ["<src>"... "<dest>"]
+
+<src> 必须是build上下文中的路径，不能使其父目录中的文件
+<src> 是目录，则其内部文件或子目录会被递归复制，但<src>目录本身不会被复制
+指定了多个<src>,或者使用了通配符，则<dest>必须是一个目录，且必须以/结尾
+<dest>不存在，会被自动创建，包括其父目录路径
+```
+- ADD 类似COPY指令，ADD支持使用TAR文件和URL路径
+```
+ADD <src>... <dest>
+ADD ["<src>",..."<dest>"]
+
+<src>为URL路径且<dest>不以/结尾，则<src>指定文件将被下载并直接创建为<dest>,<dest>以/结尾，泽文件名URL指定的文件将被直接下载并保存为<dest>/<filename>
+如果<src>是本地文件系统上的tar文件，则将被展开为一个目录，类似于“tar -x”，然而通过URL获取的tar文件将不会被自动展开
+<src>有多个，或使用了通配符，则<dest>必须是一个以/结尾的目录；如果<dest>不以/结尾，这其被视为一个普通文件，<src>的内容将被直接写入到<dest>
+```
+
+- WORKDIR 为Dockerfile中所有的RUN，CMD，ENTRYPOINT，COPY，ADD指定工作目录,可以输指定多次，影响之后的指令
+
+```
+WORKDIR /usr/local/
+
+ADD jdk ./java/
+等价于  ADD jdk /usr/local/java/
+```
+
+- VOLUME 用于在image中创建一个挂载点，以挂载Docker host上的卷或其他容器上的卷
+
+```
+VOLUME <mountpoint>
+VOLUME [" <mountpoint>"]
+
+如果挂载点目录路径下此前有文件存在，docker run命令会在卷挂载完成后将此前的所有文件复制到新挂载的卷中
+```
+
+- EXPOSE 用于为容器打开指定要监听的端口以实现与外部通信
+```
+EXPOSE <port>[/<protocol>] <port>[/<protocol>] <port>[/<protocol>]
+
+默认为TCP，可指定tcp/udp二者之一
+```
+
+- ENV 为镜像定义所系的环境变量，可以被Dockerfile中位于其后的指令所调用 格式为$variable_name或${variable_name}
+
+```
+ENV <key> <value>
+
+ENV <key>=<value> ... 如果value中包含空格可以用\转义，也可以加引号标识，另外反斜线也可用于续行
+```
+
+- RUN 用于指定docker build过程中运行的程勋，可以是任何命令
+```
+RUN <command> 启动的进程为shell的子进程，默认使用 '/bin/sh -c' 启动
+RUN ["<exectable>","<param1>","<param2>"]
+
+```
+
+- CMD 为容器指定默认要运行的程序，其运行结束之后，容器也将终止，可以被docker run 的命令行选项覆盖，可以存在多个CMD命令，但是只有最后一个生效
+
+```
+CMD <command> 启动的进程为shell的子进程，默认使用 '/bin/sh -c' 启动
+CMD ["<exectable>","<param1>","<param2>"] 启动的进程的进程号为1，系统创建，不是shell子进程
+
+CMD ["<param1>","<param2>"]  用于为ENTRYPOINT指令提供默认参数
+```
+
+- ENTRYPOINT 类似CMD指令的功能，用于容器指定默认运行的程序，从而使得容器像是一个单独的可执行程序，ENTRYPOINT启动的程序不会被docker run命令行指定的参数覆盖，而且这些命令行参数会被当作参数传递给ENRYPOINT指定的程序，在docker run 使用--entrypoint选修的参数可覆盖ENRYPOINT指定的程序
+
+```
+ENTRYPOINT <command>
+ENTRYPOINT ["<exectable>","<param1>","<param2>"]
+
+```
+
