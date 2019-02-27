@@ -272,4 +272,30 @@ ENTRYPOINT <command>
 ENTRYPOINT ["<exectable>","<param1>","<param2>"]
 
 ```
+- USER 用于指定运行image时的或运行Dockerfile中的任何RUN，CMD或ENTRYPOINT指令指定的程序时的用户名或UID，默认使用root用户，必须为/etc/passwd中有效的用户，否则docker run命令将运行失败
+
+```
+USER <UID>|<USERNAME>
+```
+
+- HEALTHCHECK 检查主进程健康与否
+	- --interval=DURATION (default:30s)
+	- --timeout=DURATION (default:30s)
+	- --start-period=DURATION (default:0s)
+	- --retries=N (default:3)
+
+程序退出之后的可能的值为
+
+0：success - 容器正常运行，处于可用状态
+1：unhealthy -容器不可用
+2：reserved - 容器处于保留状态，请不要使用这个值
+
+```
+HEALTHCHECK --interval=5m --timeout=3s --start-period=1m  CMD curl -f http://localhost/ || exit 1
+```
+
+- SHELL 定义运行程序默认使用的shell程序
+- STOPSIGNAL
+- ARG 仅在build-time使用
+- ONBUILD 用于在Dockerfile定义一个触发器，自己build时不会生效，但是其他镜像以当前镜像作为基础镜像的时候会触发生效，ONBUILD不能自我嵌套，且不能触发FROM和MAINTAINER指令，使用了OBULID的镜像应该使用特殊的标签，例如ruby：2.0-onbuild,在ONBUILD指令字使用ADD和COPY命令，如缺少指定的源文件会失败
 
