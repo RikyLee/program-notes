@@ -299,3 +299,28 @@ HEALTHCHECK --interval=5m --timeout=3s --start-period=1m  CMD curl -f http://loc
 - ARG 仅在build-time使用
 - ONBUILD 用于在Dockerfile定义一个触发器，自己build时不会生效，但是其他镜像以当前镜像作为基础镜像的时候会触发生效，ONBUILD不能自我嵌套，且不能触发FROM和MAINTAINER指令，使用了OBULID的镜像应该使用特殊的标签，例如ruby：2.0-onbuild,在ONBUILD指令字使用ADD和COPY命令，如缺少指定的源文件会失败
 
+- Docker 私有registry,支持https，http
+
+	- docker官方提供registry镜像实现搭建私有仓库功能，或者通过yum install docker-registry|| yum install docker-distribution,基于python实现，配置文件地址`/etc/docker-distribution/registry/config.yml`,数据存放地址`/var/lib/registry`，systemd服务`/usr/lib/systemd/sysytem/docker-distribution.service`,config.yml内容
+
+	```
+	version: 1.0
+	log:
+		fields:
+			service: registry
+	storage:
+		cache:
+			layerinfo: inmemory
+		filesystem:
+			rootdirectory: /var/lib/registry
+	http:
+		addr: :5000
+
+	```
+
+	- Harbor实现搭建私有仓库功能，支持多用户管理，权限控制，实时监控，image replication等
+
+- Docker的系统资源限制和验证 `https://docs.docker.com/config/containers/resource_constraints/`，可以使用docker-stress-ng镜像做压测
+
+	- 限制容器的内存资源
+	- 限制容器的CPU资源
