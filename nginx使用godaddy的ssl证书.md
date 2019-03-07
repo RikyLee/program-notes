@@ -64,7 +64,7 @@
 
   ```
 
--重启nginx服务，`nginx -s reload`,如果不生效，使用如下命令重启nginx进程
+- 重启nginx服务，`nginx -s reload`,如果不生效，使用如下命令重启nginx进程
 
   ```bash
   #Centos 7
